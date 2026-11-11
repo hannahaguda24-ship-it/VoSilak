@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOSILAK | Smart Charging</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/logoo.png">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <img src="assets/logoo.png" alt="Vosilak" class="brand-logo">
+      </div>
+
+      <div class="nav-title">MAIN MENU</div>
+      <nav class="nav">
+        <a href="#ports" class="nav-link active" data-view="ports">
+          <span class="nav-emoji">⚡</span><span class="nav-label">Charging Ports</span>
+        </a>
+        <a href="#history" class="nav-link" data-view="history">
+          <span class="nav-emoji">◷</span><span class="nav-label">Activity History</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="eco-badge">
+          <span class="eco-icon">🌱</span>
+          <div>
+            <strong>A Greener Tomorrow</strong>
+            <p>Every bottle counts. Recycle & charge.</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ================= MAIN ================= -->
+    <div class="main-wrapper" id="mainWrapper">
+
+      <!-- TOP HEADER -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <span class="hamburger">☰</span>
+          </button>
+          <div class="brand-inline">
+            <span class="brand-inline-name">VOSILAK</span>
+            <span class="brand-inline-tag">Smart Charging Station</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="online"><span class="dot"></span>System Online</div>
+          <button class="icon-btn help-btn" id="helpBtn" aria-label="How it works">?</button>
+        </div>
+      </header>
+
+      <!-- CONTENT AREA -->
+      <div class="content" id="contentArea">
+
+        <!-- ============ VIEW: CHARGING PORTS ============ -->
+        <section class="view active" id="view-ports">
+
+          <div class="page-head">
+            <div>
+              <small class="eyebrow">SMART CHARGING STATION</small>
+              <h1>Charging <span class="green-text">Ports</span></h1>
+              <p>Recycle bottles. Earn minutes. Charge your device.</p>
+            </div>
+            <div class="session-chip">
+              <span class="chip-dot"></span>
+              <span id="activeSessions">0 active session</span>
+            </div>
+          </div>
+
+          <!-- Ports grid -->
+          <div class="ports" id="portContainer"></div>
+
+          <!-- Voucher section (compact) -->
+          <section class="panel redeem-panel">
+            <div class="redeem-row">
+              <div class="redeem-copy">
+                <h3>🎟 Voucher Redemption</h3>
+                <p>Have unused minutes? Enter your voucher code to convert them into drinking water or save them for another recharge.</p>
+              </div>
+              <button class="btn btn-primary" id="openRedeemBtn">REDEEM VOUCHER</button>
+            </div>
+          </section>
+
+        </section>
+
+        <!-- ============ VIEW: ACTIVITY HISTORY ============ -->
+        <section class="view" id="view-history">
+          <div class="page-head">
+            <div>
+              <small class="eyebrow">RECORDS</small>
+              <h1>Activity <span class="green-text">History</span></h1>
+              <p>All successful bottle insertion activities across your ports.</p>
+            </div>
+            <div class="session-chip">
+              <span class="chip-dot"></span>
+              <span id="historyCount">0 records</span>
+            </div>
+          </div>
+
+          <div class="panel history-panel">
+            <div class="history-scroll" id="historyScroll">
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Port</th>
+                    <th>Activity</th>
+                    <th class="num">Bottles</th>
+                    <th class="num">Minutes Earned</th>
+                  </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+              </table>
+              <div class="empty-state" id="historyEmpty">
+                <span class="empty-icon">📋</span>
+                <p>No activity history yet.</p>
+                <small>Insert a bottle on any port to record your first activity.</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOAST ================= -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ================= INSERT BOTTLE MODAL ================= -->
+  <div class="modal-overlay" id="insertModal">
+    <div class="modal insert-modal">
+      <div class="modal-icon">♻</div>
+      <h3>Insert <span class="green-text">Bottle</span></h3>
+      <p class="modal-sub" id="insertPortLabel">Port 1</p>
+
+      <p class="insert-instruction">Please insert your plastic bottle into the slot now. Click <b>Done Inserting Bottle</b> once it has been accepted.</p>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="insertProgress"></div>
+      </div>
+      <div class="insert-timer" id="insertTimer">00:10</div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="insertDoneBtn">✓ DONE INSERTING BOTTLE</button>
+        <button class="btn btn-ghost" id="insertCancelBtn">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VOUCHER GENERATED MODAL ================= -->
+  <div class="modal-overlay" id="voucherModal">
+    <div class="modal">
+      <div class="modal-icon success">🎟</div>
+      <h3>Session <span class="green-text">Completed</span></h3>
+      <p class="modal-sub">Your unused charging minutes have been saved as a voucher.</p>
+
+      <div class="voucher-detail-box">
+        <div class="voucher-row"><span>Port</span><strong id="voucherPort">—</strong></div>
+        <div class="voucher-row"><span>Remaining Minutes</span><strong id="voucherMinutes">—</strong></div>
+        <div class="voucher-row"><span>Voucher Code</span><strong class="voucher-code" id="voucherCode">—</strong></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="voucherCopyBtn">📋 COPY CODE</button>
+        <button class="btn btn-ghost" id="voucherCloseBtn">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REDEEM: INPUT MODAL ================= -->
+  <div class="modal-overlay" id="redeemModal">
+    <div class="modal">
+      <div class="modal-icon">🎟</div>
+      <h3>Voucher <span class="green-text">Redemption</span></h3>
+      <p class="modal-sub">Enter the voucher code generated from a port. The minutes will only return to the port where the voucher was created.</p>
+
+      <input type="text" id="redeemInput" class="text-input" placeholder="e.g. V1-ABC123" autocomplete="off">
+      <div class="field-error" id="redeemError"></div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="redeemSubmitBtn">REDEEM</button>
+        <button class="btn btn-ghost" id="redeemCancelBtn">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REDEEM: REWARD MODAL ================= -->
+  <div class="modal-overlay" id="rewardModal">
+    <div class="modal">
+      <div class="verified-banner">✓ VOUCHER VERIFIED</div>
+
+      <div class="voucher-detail-box">
+        <div class="voucher-row"><span>Original Port</span><strong id="rewardPort">—</strong></div>
+        <div class="voucher-row"><span>Available Minutes</span><strong id="rewardMinutes">—</strong></div>
+      </div>
+
+      <p class="reward-prompt">Choose your reward:</p>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="rewardWaterBtn">💧 CONVERT TO DRINKING WATER</button>
+        <button class="btn btn-secondary" id="rewardRechargeBtn">⚡ SAVE FOR ANOTHER RECHARGE</button>
+        <button class="btn btn-ghost" id="rewardCancelBtn">CANCEL</button>
+      </div>
+
+      <div class="field-note" id="rewardInfo"></div>
+    </div>
+  </div>
+
+  <!-- ================= HOW IT WORKS MODAL ================= -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal help-modal">
+      <h3>How <span class="green-text">Vosilak</span> Works</h3>
+      <p class="modal-sub">Turn plastic bottles into charging time in six simple steps.</p>
+
+      <ol class="help-steps">
+        <li><span class="help-num">1</span><div><b>Insert a Bottle</b><p>Select a port and click Insert Bottle. Follow the timer and click Done Inserting Bottle after your bottle is accepted.</p></div></li>
+        <li><span class="help-num">2</span><div><b>Earn Charging Time</b><p>Every accepted bottle adds 3 minutes to the selected port.</p></div></li>
+        <li><span class="help-num">3</span><div><b>Start Charging</b><p>Connect your device to the port and click Start Charging.</p></div></li>
+        <li><span class="help-num">4</span><div><b>Finish Charging</b><p>Click Finish Charging when you're done. Unused minutes automatically generate a voucher code.</p></div></li>
+        <li><span class="help-num">5</span><div><b>Redeem Your Voucher</b><p>Click Redeem Voucher and enter the generated code.</p></div></li>
+        <li><span class="help-num">6</span><div><b>Choose Your Reward</b><p>Convert unused minutes into drinking water or save them for another session on the original port.</p></div></li>
+      </ol>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="helpCloseBtn">GOT IT</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
